@@ -90,7 +90,7 @@ def add_to_album(album_id,image_id_list):
 
 def get_user_albums():
     #get_account_albums(self, username, page=0)
-    albums = client.get_account_albums('broadsid3',page=0)
+    albums = client.get_account_albums(USERNAME,page=0)
     for x in albums:
         print(x.title)
         print(x.id)
