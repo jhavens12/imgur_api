@@ -57,18 +57,19 @@ def set_old_tokens(credentials_dict):
     return client
 
 def get_files(mypath):
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f != '.DS_Store']
     image_list = []
 
     for x in onlyfiles:
         image_list.append(mypath+x)
+    pprint(image_list)
     return image_list
 
 def upload_images(image_list):
     image_ids = []
     for picture_path in image_list:
         uploaded_image = client.upload_from_path(picture_path, config=None, anon=False)
-        sleep(10)
+        sleep(20)
         print(uploaded_image['link'])
         image_ids.append(uploaded_image['id'])
     return image_ids
@@ -79,14 +80,16 @@ def create_album(name):
     #if no, create album and return id
 
     config = {
-    'name':  name
+    'name': name,
+    'title': name,
+    'description': name
     }
 
     new_album = client.create_album(config)
     return new_album['id']
 
 def add_to_album(album_id,image_id_list):
-    result = client.album_add_images(new_album['id'],image_ids)
+    result = client.album_add_images(album_id,image_ids)
 
 def get_user_albums():
     #get_account_albums(self, username, page=0)
@@ -95,7 +98,7 @@ def get_user_albums():
         print(x.title)
         print(x.id)
 
-mypath = '~/Documents/GitHub/imgur_api/Test_Photos/'
+mypath = '/Documents/GitHub/imgur_api/Test_Photos/'
 #credentials_dict = get_new_tokens(credentials_dict)
 client = set_old_tokens(credentials_dict)
 pprint(client.credits)
