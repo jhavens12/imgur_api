@@ -1,2 +1,2 @@
 # imgur_api
-Imgur API 
+Initial testing with the Imgur API
