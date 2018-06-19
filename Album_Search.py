@@ -56,57 +56,33 @@ def set_old_tokens(credentials_dict):
     client.set_user_auth(credentials_dict['access_token'], credentials_dict['refresh_token'])
     return client
 
-def get_files(mypath):
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f != '.DS_Store']
-    image_list = []
-
-    for x in onlyfiles:
-        image_list.append(mypath+x)
-    pprint(image_list)
-    return image_list
-
-def upload_images(image_list):
-    image_ids = []
-    for picture_path in image_list:
-        uploaded_image = client.upload_from_path(picture_path, config=None, anon=False)
-        sleep(20)
-        print(uploaded_image['link'])
-        image_ids.append(uploaded_image['id'])
-    return image_ids
-
-def create_album(name):
-    #take name, check to see if album name exists
-    #if yes, return id
-    #if no, create album and return id
-
-    config = {
-    'name': name,
-    'title': name,
-    'description': name
-    }
-
-    new_album = client.create_album(config)
-    return new_album['id']
-
-def add_to_album(album_id,image_id_list):
-    result = client.album_add_images(album_id,image_ids)
+def album_loop(page_number):
+    sleep(8)
+    albums = client.get_account_albums('0mega5upreme',page=page_number)
+    n = 0
+    album_dict = {}
+    for x in albums:
+        album_dict[x.title] = x.id
+        n = n+1
+    return album_dict,n
 
 def get_user_albums():
     #get_account_albums(self, username, page=0)
-    albums = client.get_account_albums(USERNAME,page=0)
-    for x in albums:
-        print(x.title)
-        print(x.id)
+    page_number = 0
+    album_dict,count = album_loop(page_number)
 
-mypath = '/Users/Havens/Documents/GitHub/imgur_api/Test_Photos/'
+    while count == 50:
+        page_number = page_number + 1
+        album_dict_part,count = album_loop(page_number)
+        album_dict = {**album_dict, **album_dict_part}
+    print("Album Count: "+str(len(list(album_dict.keys()))))
+    return album_dict
+
+
+
 #credentials_dict = get_new_tokens(credentials_dict)
 client = set_old_tokens(credentials_dict)
 pprint(client.credits)
 
-file_list = get_files(mypath) #get files to upload
-image_ids = upload_images(file_list) #upload images and return list of ids
-album_id = create_album("Test1") #create album and get album id
-add_to_album(album_id,image_ids) #add images to album
-print("www.imgur.com/a/"+album_id) #pring album link
-
-#get_user_albums()
+final_dict = get_user_albums()
+pprint(final_dict)

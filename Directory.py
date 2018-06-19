@@ -29,5 +29,16 @@ def generate_event_list():
             event_list_full.append(day+event+"/")
     return event_list_full
 
-print(generate_event_list())
+final_list = generate_event_list()
+for item in final_list:
+    #7 - year, 8- month, 9-day, 10- title
+
+    split_item = item.split('/')
+    print(item)
+    print(split_item[7])
+    print(split_item[8])
+    print(split_item[9])
+    print(split_item[10])
+    print(split_item[7]+"/"+split_item[8]+"/"+split_item[9]+" - "+split_item[10])
+    print()
 #get dates from the event_list_full names
